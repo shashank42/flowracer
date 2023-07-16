@@ -1,0 +1,7 @@
+
+
+flow transactions send cadence/transactions/accept_wager.cdc 0 1 
+flow transactions send cadence/transactions/distribute_wager.cdc 0 0xf8d6e0586b0a20c7
+
+flow scripts execute cadence/scripts/get_all_wagers.cdc 
+flow scripts execute cadence/scripts/get_total_wagers.cdc 
