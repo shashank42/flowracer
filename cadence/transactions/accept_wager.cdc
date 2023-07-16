@@ -23,7 +23,9 @@ transaction(matchId: UInt64, amount: UInt64){
         self.sender <- signer.borrow<&ExampleToken.Vault>(from: ExampleToken.VaultStoragePath)!.withdraw(amount: UFix64(amount)) as! @ExampleToken.Vault
 
         // Get the account of the recipient and borrow a reference to their receiver
-        var account = getAccount(0xf8d6e0586b0a20c7)
+        // var account = getAccount(0xf8d6e0586b0a20c7)
+        var account = getAccount(0x0fb46f70bfa68d94)
+        
         self.tokenReceiver = account
             .getCapability(ExampleToken.ReceiverPublicPath)
             .borrow<&{FungibleToken.Receiver}>()
