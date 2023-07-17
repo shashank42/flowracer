@@ -9,8 +9,8 @@
 
 
 import FungibleToken from 0x9a0766d93b6608b7
-import FlowRacerToken from 0x9bac851ed05b0c54
-import FlowRacer from 0x9bac851ed05b0c54
+import FlowRacerToken from 0x1c5fd54be8de5259
+import FlowRacer from 0x1c5fd54be8de5259
 
 transaction(matchId: UInt64, amount: UInt64){
 
@@ -20,8 +20,6 @@ transaction(matchId: UInt64, amount: UInt64){
     prepare(signer: AuthAccount){
 
         self.sender <- signer.borrow<&FlowRacerToken.Vault>(from: FlowRacerToken.VaultStoragePath)!.withdraw(amount: UFix64(amount)) as! @FlowRacerToken.Vault
-        
-        var account = getAccount(0x9bac851ed05b0c54)
 
         self.address = signer.address
     }

@@ -27,7 +27,7 @@
 			"aliases": {
                 "emulator": "0xf8d6e0586b0a20c7",
                 "mainnet": "0xf233dcee88fe0abe",
-                "testnet": "0x9bac851ed05b0c54"
+                "testnet": "0x1c5fd54be8de5259"
             }
         },
         "NonFungibleToken": {
@@ -77,20 +77,20 @@
 			"source": "./cadence/contracts/CarNFT.cdc",
 			"aliases": {
 				"emulator": "0xf8d6e0586b0a20c7",
-				"testnet": "0x9bac851ed05b0c54"
+				"testnet": "0x1c5fd54be8de5259"
 			}
 		},
 		"ViewResolver": {
 			"source": "./cadence/contracts/standard/ViewResolver.cdc",
 			"aliases": {
 				"emulator": "0xf8d6e0586b0a20c7",
-				"testnet": "0x9bac851ed05b0c54"
+				"testnet": "0x1c5fd54be8de5259"
 			}
 		},
 		"FlowRacer": {
 			"source": "./cadence/contracts/FlowRacer.cdc",
 			"aliases": {
-				"testnet": "0x9bac851ed05b0c54"
+				"testnet": "0x1c5fd54be8de5259"
 			}
 		}
 	},
@@ -113,8 +113,8 @@
 			"key": "736ebd5b5402dde63564271ac65f6f49b1e7bf58a5a269c9011bbba8758db17b"
 		},
 		"testnet-account": {
-			"address": "9bac851ed05b0c54",
-			"key": "1d4ea0b48cca1661d60fbf131f6db6d1d316dfccd2c7f361fae3602cb42ecfaf"
+			"address": "1c5fd54be8de5259",
+			"key": "4b084989e20fa02e78bdc8b4d82533c185642d4168461bf547bf7a1b077446b3"
 		},
 		"testnet-client": {
 			"address": "88df5a4833d1e04e",
