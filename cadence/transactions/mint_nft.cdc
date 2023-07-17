@@ -2,59 +2,55 @@
 /// It must be run with the account that has the minter resource
 /// stored in /storage/NFTMinter
 
-import NonFungibleToken from "NonFungibleToken"
-import ExampleNFT from "ExampleNFT"
-import MetadataViews from "MetadataViews"
-import FungibleToken from "FungibleToken"
+// import NonFungibleToken from "NonFungibleToken"
+// import CarNFT from "CarNFT"
+// import MetadataViews from "MetadataViews"
+// import FungibleToken from "FungibleToken"
+// import FlowRacerToken from "FlowRacerToken"
+
+
+import NonFungibleToken from 0x631e88ae7f1d7c20
+import CarNFT from 0x9bac851ed05b0c54
+import MetadataViews from 0x631e88ae7f1d7c20
+import FungibleToken from 0x9a0766d93b6608b7
+import FlowRacerToken from 0x9bac851ed05b0c54
 
 transaction(
-    recipient: Address,
-    name: String,
-    description: String,
-    thumbnail: String,
+    type: String,
+    url: String,
+    amount: UFix64
 ) {
 
-    /// local variable for storing the minter reference
-    let minter: &ExampleNFT.NFTMinter
-
-    /// Reference to the receiver's collection
     let recipientCollectionRef: &{NonFungibleToken.CollectionPublic}
-
-    /// Previous NFT ID before the transaction executes
     let mintingIDBefore: UInt64
+    let sender: @FlowRacerToken.Vault
+    let tokenReceiver: &{FungibleToken.Receiver}
 
     prepare(signer: AuthAccount) {
-        self.mintingIDBefore = ExampleNFT.totalSupply
+        self.mintingIDBefore = CarNFT.totalSupply
 
-        // borrow a reference to the NFTMinter resource in storage
-        self.minter = signer.borrow<&ExampleNFT.NFTMinter>(from: ExampleNFT.MinterStoragePath)
-            ?? panic("Account does not store an object at the specified path")
+        if signer.borrow<&AnyResource>(from: CarNFT.CollectionStoragePath) == nil {
+            signer.save(<- CarNFT.createEmptyCollection(), to: CarNFT.CollectionStoragePath)
+            signer.link<&AnyResource{NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection}>(CarNFT.CollectionPublicPath, target: CarNFT.CollectionStoragePath)
+        }
 
-        // Borrow the recipient's public NFT collection reference
-        self.recipientCollectionRef = getAccount(recipient)
-            .getCapability(ExampleNFT.CollectionPublicPath)
-            .borrow<&{NonFungibleToken.CollectionPublic}>()
-            ?? panic("Could not get receiver reference to the NFT Collection")
-    }
-
-    pre {
+        self.recipientCollectionRef = signer
+            .getCapability(CarNFT.CollectionPublicPath)
+            .borrow<&{NonFungibleToken.CollectionPublic}>()!
         
-    }
+        self.sender <- signer.borrow<&FlowRacerToken.Vault>(from: FlowRacerToken.VaultStoragePath)!.withdraw(amount: UFix64(amount)) as! @FlowRacerToken.Vault
 
+        self.tokenReceiver = signer
+            .getCapability(FlowRacerToken.ReceiverPublicPath)
+            .borrow<&{FungibleToken.Receiver}>()!
+    }
     execute {
-
-        // Mint the NFT and deposit it to the recipient's collection
-        self.minter.mintNFT(
+        CarNFT.mintNFT(
             recipient: self.recipientCollectionRef,
-            name: name,
-            description: description,
-            thumbnail: thumbnail,
-            royalties: [] as [MetadataViews.Royalty]
+            type: type,
+            url: url,
+            requestorVault: <- self.sender,
+            receiverCapability: self.tokenReceiver
         )
-    }
-
-    post {
-        self.recipientCollectionRef.getIDs().contains(self.mintingIDBefore): "The next NFT ID should have been minted and delivered"
-        ExampleNFT.totalSupply == self.mintingIDBefore + 1: "The total supply should have been increased by 1"
     }
 }

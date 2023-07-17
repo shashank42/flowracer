@@ -1,13 +1,8 @@
 // This script reads the balance field
-// of an account's ExampleToken Balance
+// of an account's FlowRacerToken Balance
 
-import FlowRacer from "FlowRacer"
+import FlowRacer from 0x9bac851ed05b0c54
 
 pub fun main(): {UInt64: UInt64} {
-    // let account = getAccount(address)
-    // let vaultRef = account.getCapability(ExampleToken.VaultPublicPath)
-    //     .borrow<&ExampleToken.Vault{FungibleToken.Balance}>()
-    //     ?? panic("Could not borrow Balance reference to the Vault")
-
     return FlowRacer.getTotalWagers()
 }

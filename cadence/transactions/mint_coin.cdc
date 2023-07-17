@@ -1,52 +1,51 @@
 // import FungibleToken from "FungibleToken"
-// import ExampleToken from "ExampleToken"
+// import FlowRacerToken from "FlowRacerToken"
 
-import FungibleToken from "FungibleToken"
-import ExampleToken from "ExampleToken"
+// import FungibleToken from "FungibleToken"
+// import FlowRacerToken from "FlowRacerToken"
 
 
-/// This transaction is what the minter Account uses to mint new tokens
-/// They provide the recipient address and amount to mint, and the tokens
-/// are transferred to the address after minting
+import FungibleToken from 0x9a0766d93b6608b7
+import MetadataViews from 0x631e88ae7f1d7c20
 
-transaction(recipient: Address, amount: UFix64) {
+import FlowRacerToken from 0x9bac851ed05b0c54
 
-    /// Reference to the Example Token Admin Resource object
-    let tokenAdmin: &ExampleToken.Administrator
-
-    /// Reference to the Fungible Token Receiver of the recipient
+transaction(amount: UFix64) {
     let tokenReceiver: &{FungibleToken.Receiver}
-
-    /// The total supply of tokens before the burn
     let supplyBefore: UFix64
 
     prepare(signer: AuthAccount) {
-        self.supplyBefore = ExampleToken.totalSupply
 
-        // Borrow a reference to the admin object
-        self.tokenAdmin = signer.borrow<&ExampleToken.Administrator>(from: ExampleToken.AdminStoragePath)
-            ?? panic("Signer is not the token admin")
+        if signer.borrow<&FlowRacerToken.Vault>(from: FlowRacerToken.VaultStoragePath) != nil {
+        } else {
+            signer.save(
+                <-FlowRacerToken.createEmptyVault(),
+                to: FlowRacerToken.VaultStoragePath
+            )
 
-        // Get the account of the recipient and borrow a reference to their receiver
-        self.tokenReceiver = getAccount(recipient)
-            .getCapability(ExampleToken.ReceiverPublicPath)
-            .borrow<&{FungibleToken.Receiver}>()
-            ?? panic("Unable to borrow receiver reference")
+            signer.link<&FlowRacerToken.Vault{FungibleToken.Receiver}>(
+                FlowRacerToken.ReceiverPublicPath,
+                target: FlowRacerToken.VaultStoragePath
+            )
+            signer.link<&FlowRacerToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>(
+                FlowRacerToken.VaultPublicPath,
+                target: FlowRacerToken.VaultStoragePath
+            )
+            signer.link<&FlowRacerToken.Vault{FungibleToken.Provider}>(
+                FlowRacerToken.VaultPublicPath,
+                target: FlowRacerToken.VaultStoragePath
+            )
+        }  
+
+        self.supplyBefore = FlowRacerToken.totalSupply
+
+        self.tokenReceiver = signer
+            .getCapability(FlowRacerToken.ReceiverPublicPath)
+            .borrow<&{FungibleToken.Receiver}>()!
     }
-
     execute {
-
-        // Create a minter and mint tokens
-        let minter <- self.tokenAdmin.createNewMinter(allowedAmount: amount)
-        let mintedVault <- minter.mintTokens(amount: amount)
-
-        // Deposit them to the receiever
+        
+        let mintedVault <- FlowRacerToken.mintTokens(amount: amount)
         self.tokenReceiver.deposit(from: <-mintedVault)
-
-        destroy minter
-    }
-
-    post {
-        ExampleToken.totalSupply == self.supplyBefore + amount: "The total supply must be increased by the amount"
     }
 }

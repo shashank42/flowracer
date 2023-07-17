@@ -22,11 +22,12 @@
                 "testnet": "0x9a0766d93b6608b7"
             }
         },    
-        "ExampleToken": {
-            "source": "./cadence/contracts/ExampleToken.cdc",
-            "alias": {
+        "FlowRacerToken": {
+            "source": "./cadence/contracts/FlowRacerToken.cdc",
+			"aliases": {
                 "emulator": "0xf8d6e0586b0a20c7",
-				"testnet": "0x0fb46f70bfa68d94"
+                "mainnet": "0xf233dcee88fe0abe",
+                "testnet": "0x9bac851ed05b0c54"
             }
         },
         "NonFungibleToken": {
@@ -72,29 +73,25 @@
 				"emulator": "0xf8d6e0586b0a20c7"
 			}
 		},
-    	"ExampleNFT": {
-			"source": "./cadence/contracts/ExampleNFT.cdc",
+    	"CarNFT": {
+			"source": "./cadence/contracts/CarNFT.cdc",
 			"aliases": {
 				"emulator": "0xf8d6e0586b0a20c7",
-				"testnet": "0x0fb46f70bfa68d94"
+				"testnet": "0x9bac851ed05b0c54"
 			}
 		},
 		"ViewResolver": {
 			"source": "./cadence/contracts/standard/ViewResolver.cdc",
 			"aliases": {
 				"emulator": "0xf8d6e0586b0a20c7",
-				"testnet": "0x0fb46f70bfa68d94"
-			}
-		},
-		"InferenceNFT": {
-			"source": "./cadence/contracts/InferenceNFT.cdc",
-			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7",
-				"testnet": "0x0fb46f70bfa68d94"
+				"testnet": "0x9bac851ed05b0c54"
 			}
 		},
 		"FlowRacer": {
-			"source": "./cadence/contracts/FlowRacer.cdc"
+			"source": "./cadence/contracts/FlowRacer.cdc",
+			"aliases": {
+				"testnet": "0x9bac851ed05b0c54"
+			}
 		}
 	},
 	"networks": {
@@ -116,16 +113,20 @@
 			"key": "736ebd5b5402dde63564271ac65f6f49b1e7bf58a5a269c9011bbba8758db17b"
 		},
 		"testnet-account": {
-			"address": "0fb46f70bfa68d94",
-			"key": "078874df2985c18378d2ffc34682f443a13170bc800f88ac88d861db60922c9e"
+			"address": "9bac851ed05b0c54",
+			"key": "1d4ea0b48cca1661d60fbf131f6db6d1d316dfccd2c7f361fae3602cb42ecfaf"
+		},
+		"testnet-client": {
+			"address": "88df5a4833d1e04e",
+			"key": "efff0d675e534526eeef80e8d608b27898165b4f9e8f696918ba7955236ce69a"
 		}
 	},
 	"deployments": {
 		"emulator": {
-			"emulator-account": ["NonFungibleToken", "FungibleToken", "MetadataViews", "FungibleTokenMetadataViews",  "ViewResolver", "ExampleToken",  "ExampleNFT", "FlowRacer"]
+			"emulator-account": ["NonFungibleToken", "FungibleToken", "MetadataViews", "FungibleTokenMetadataViews",  "ViewResolver", "FlowRacerToken",  "CarNFT", "FlowRacer"]
 		},
 		"testnet": {
-			"testnet-account": [ "ViewResolver", "ExampleToken",  "ExampleNFT", "FlowRacer"]
+			"testnet-account": [ "ViewResolver", "FlowRacerToken",  "CarNFT", "FlowRacer"]
 		}
 	}
 }

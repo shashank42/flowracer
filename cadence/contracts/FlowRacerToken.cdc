@@ -2,7 +2,7 @@ import FungibleToken from "FungibleToken"
 import MetadataViews from "MetadataViews"
 import FungibleTokenMetadataViews from "FungibleTokenMetadataViews"
 
-pub contract ExampleToken: FungibleToken {
+pub contract FlowRacerToken: FungibleToken {
 
     /// Total supply of ExampleTokens in existence
     pub var totalSupply: UFix64
@@ -81,7 +81,7 @@ pub contract ExampleToken: FungibleToken {
         /// @param from: The Vault resource containing the funds that will be deposited
         ///
         pub fun deposit(from: @FungibleToken.Vault) {
-            let vault <- from as! @ExampleToken.Vault
+            let vault <- from as! @FlowRacerToken.Vault
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
             vault.balance = 0.0
@@ -90,11 +90,11 @@ pub contract ExampleToken: FungibleToken {
 
         destroy() {
             if self.balance > 0.0 {
-                ExampleToken.totalSupply = ExampleToken.totalSupply - self.balance
+                FlowRacerToken.totalSupply = FlowRacerToken.totalSupply - self.balance
             }
         }
 
-        /// The way of getting all the Metadata Views implemented by ExampleToken
+        /// The way of getting all the Metadata Views implemented by FlowRacerToken
         ///
         /// @return An array of Types defining the implemented views. This value will be used by
         ///         developers to know which parameter to pass to the resolveView() method.
@@ -107,7 +107,7 @@ pub contract ExampleToken: FungibleToken {
             ]
         }
 
-        /// The way of getting a Metadata View out of the ExampleToken
+        /// The way of getting a Metadata View out of the FlowRacerToken
         ///
         /// @param view: The Type of the desired view.
         /// @return A structure representing the requested view.
@@ -139,15 +139,15 @@ pub contract ExampleToken: FungibleToken {
                     )
                 case Type<FungibleTokenMetadataViews.FTVaultData>():
                     return FungibleTokenMetadataViews.FTVaultData(
-                        storagePath: ExampleToken.VaultStoragePath,
-                        receiverPath: ExampleToken.ReceiverPublicPath,
-                        metadataPath: ExampleToken.VaultPublicPath,
+                        storagePath: FlowRacerToken.VaultStoragePath,
+                        receiverPath: FlowRacerToken.ReceiverPublicPath,
+                        metadataPath: FlowRacerToken.VaultPublicPath,
                         providerPath: /private/exampleTokenVault,
-                        receiverLinkedType: Type<&ExampleToken.Vault{FungibleToken.Receiver}>(),
-                        metadataLinkedType: Type<&ExampleToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
-                        providerLinkedType: Type<&ExampleToken.Vault{FungibleToken.Provider}>(),
-                        createEmptyVaultFunction: (fun (): @ExampleToken.Vault {
-                            return <-ExampleToken.createEmptyVault()
+                        receiverLinkedType: Type<&FlowRacerToken.Vault{FungibleToken.Receiver}>(),
+                        metadataLinkedType: Type<&FlowRacerToken.Vault{FungibleToken.Balance, MetadataViews.Resolver}>(),
+                        providerLinkedType: Type<&FlowRacerToken.Vault{FungibleToken.Provider}>(),
+                        createEmptyVaultFunction: (fun (): @FlowRacerToken.Vault {
+                            return <-FlowRacerToken.createEmptyVault()
                         })
                     )
             }
@@ -201,12 +201,12 @@ pub contract ExampleToken: FungibleToken {
         /// @param amount: The quantity of tokens to mint
         /// @return The Vault resource containing the minted tokens
         ///
-        pub fun mintTokens(amount: UFix64): @ExampleToken.Vault {
+        pub fun mintTokens(amount: UFix64): @FlowRacerToken.Vault {
             pre {
                 amount > 0.0: "Amount minted must be greater than zero"
                 amount <= self.allowedAmount: "Amount minted must be less than the allowed amount"
             }
-            ExampleToken.totalSupply = ExampleToken.totalSupply + amount
+            FlowRacerToken.totalSupply = FlowRacerToken.totalSupply + amount
             self.allowedAmount = self.allowedAmount - amount
             emit TokensMinted(amount: amount)
             return <-create Vault(balance: amount)
@@ -216,6 +216,25 @@ pub contract ExampleToken: FungibleToken {
             self.allowedAmount = allowedAmount
         }
     }
+
+    /// Function that mints new tokens, adds them to the total supply,
+        /// and returns them to the calling context.
+        ///
+        /// @param amount: The quantity of tokens to mint
+        /// @return The Vault resource containing the minted tokens
+        ///
+        pub fun mintTokens(amount: UFix64): @FlowRacerToken.Vault {
+            pre {
+                amount > 0.0: "Amount minted must be greater than zero"
+            }
+            FlowRacerToken.totalSupply = FlowRacerToken.totalSupply + amount
+
+            emit TokensMinted(amount: amount)
+            return <-create Vault(balance: amount)
+        }
+
+
+    
 
     /// Resource object that token admin accounts can hold to burn tokens.
     ///
@@ -229,7 +248,7 @@ pub contract ExampleToken: FungibleToken {
         /// @param from: The Vault resource containing the tokens to burn
         ///
         pub fun burnTokens(from: @FungibleToken.Vault) {
-            let vault <- from as! @ExampleToken.Vault
+            let vault <- from as! @FlowRacerToken.Vault
             let amount = vault.balance
             destroy vault
             emit TokensBurned(amount: amount)
@@ -258,7 +277,7 @@ pub contract ExampleToken: FungibleToken {
 
         // Create a public capability to the stored Vault that only exposes
         // the `balance` field and the `resolveView` method through the `Balance` interface
-        self.account.link<&ExampleToken.Vault{FungibleToken.Balance}>(
+        self.account.link<&FlowRacerToken.Vault{FungibleToken.Balance}>(
             self.VaultPublicPath,
             target: self.VaultStoragePath
         )
@@ -268,7 +287,7 @@ pub contract ExampleToken: FungibleToken {
         //     target: self.VaultStoragePath
         // )
 
-        self.account.link<&ExampleToken.Vault>(/private/exampleTokenVault, target: self.VaultStoragePath)
+        self.account.link<&FlowRacerToken.Vault>(/private/exampleTokenVault, target: self.VaultStoragePath)
 
         let admin <- create Administrator()
         

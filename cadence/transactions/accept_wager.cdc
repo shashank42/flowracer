@@ -1,44 +1,38 @@
 // import MainContractV2 from "MainContractV2"
-// import ExampleToken from "ExampleToken"
+// import FlowRacerToken from "FlowRacerToken"
 // import FungibleToken from "FungibleToken"
 
 
-import FlowRacer from "FlowRacer"
-import ExampleToken from "ExampleToken"
-import FungibleToken from "FungibleToken"
+// import FlowRacer from "FlowRacer"
+// import FlowRacerToken from "FlowRacerToken"
+// import FungibleToken from "FungibleToken"
 
+
+import FungibleToken from 0x9a0766d93b6608b7
+import FlowRacerToken from 0x9bac851ed05b0c54
+import FlowRacer from 0x9bac851ed05b0c54
 
 transaction(matchId: UInt64, amount: UInt64){
 
-    // The Vault resource that holds the tokens that are being transferred
-    let sender: @ExampleToken.Vault
-    // let vault: Capability //<&ExampleToken.Vault{FungibleToken.Receiver}>
-    /// Reference to the Fungible Token Receiver of the recipient
+    let sender: @FlowRacerToken.Vault
     let tokenReceiver: &{FungibleToken.Receiver}
     let address: Address
 
-
     prepare(signer: AuthAccount){
 
-        self.sender <- signer.borrow<&ExampleToken.Vault>(from: ExampleToken.VaultStoragePath)!.withdraw(amount: UFix64(amount)) as! @ExampleToken.Vault
+        self.sender <- signer.borrow<&FlowRacerToken.Vault>(from: FlowRacerToken.VaultStoragePath)!.withdraw(amount: UFix64(amount)) as! @FlowRacerToken.Vault
 
-        // Get the account of the recipient and borrow a reference to their receiver
-        // var account = getAccount(0xf8d6e0586b0a20c7)
-        var account = getAccount(0x0fb46f70bfa68d94)
-        
+        var account = getAccount(0x9bac851ed05b0c54)
+
         self.tokenReceiver = account
-            .getCapability(ExampleToken.ReceiverPublicPath)
-            .borrow<&{FungibleToken.Receiver}>()
-            ?? panic("Unable to borrow receiver reference")
-
-        // self.vault = signer.getCapability(ExampleToken.ReceiverPublicPath)
+            .getCapability(FlowRacerToken.ReceiverPublicPath)
+            .borrow<&{FungibleToken.Receiver}>()!
 
         self.address = signer.address
 
     }
 
     execute{
-
         FlowRacer.acceptWager(
             matchId: matchId, 
             amount: amount, 
@@ -46,6 +40,5 @@ transaction(matchId: UInt64, amount: UInt64){
             requestorVault: <- self.sender,
             receiverCapability: self.tokenReceiver
         )
-
     }
 }

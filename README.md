@@ -69,7 +69,7 @@ You can already import certain common contracts we included for you, just make s
 - FungibleToken `import "FungibleToken"`
 - FUSD `import "FUSD"`
 - MetadataViews `import "MetadataViews"`
-- ExampleNFT `import "ExampleNFT"`
+- CarNFT `import "CarNFT"`
 - NFTStorefrontV2 `import "NFTStorefrontV2"`
 - NFTStorefront `import "NFTStorefront"`
 

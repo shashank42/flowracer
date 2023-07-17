@@ -1,5 +1,5 @@
 // Cadence contract for managing a wager between players
-import ExampleToken from "ExampleToken"
+import FlowRacerToken from "FlowRacerToken"
 import FungibleToken from "FungibleToken"
 
 pub contract FlowRacer {
@@ -76,8 +76,7 @@ pub contract FlowRacer {
         matchId: UInt64, 
         amount: UInt64, 
         account: Address,
-        requestorVault: @ExampleToken.Vault,
-        receiverCapability: &{FungibleToken.Receiver}
+        requestorVault: @FlowRacerToken.Vault
     ) {
         let player = Player(address: account, wager: amount)
         if self.wagers[matchId] != nil {
@@ -91,24 +90,19 @@ pub contract FlowRacer {
         self.totalWagers[matchId] = self.totalWagers[matchId] ?? UInt64(0)
         self.totalWagers[matchId] = self.totalWagers[matchId]! + amount
 
-        // Transfer the wager amount from the player's account to the contract's account
-        receiverCapability.deposit(from: <- requestorVault)
+
+        let tokenProvider = self.account.getCapability(FlowRacerToken.ReceiverPublicPath).borrow<&{FungibleToken.Receiver}>()!
+        tokenProvider.deposit(from: <- requestorVault)
     }
 
     // Distribute the total wager amount among players when the match ends
     pub fun distributeWager(
         matchId: UInt64, 
         winner: Address,
-        tokenProvider: Capability<&ExampleToken.Vault>,
         responderRecievingCapability: &{FungibleToken.Receiver}
     ) {
-
-        // Ensure that the caller has the admin capability
-        // self.adminCapability.borrow()?.distributeWager(matchId, winner)
-
-
         let totalWagerAmount = self.totalWagers[matchId] ?? UInt64(0)
-
+        let tokenProvider = self.account.getCapability<&FlowRacerToken.Vault>(/private/exampleTokenVault)
         responderRecievingCapability.deposit(from: <- tokenProvider.borrow()!.withdraw(amount: UFix64(totalWagerAmount)))
     }
 
