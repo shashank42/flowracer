@@ -6,7 +6,7 @@ import FlowRacerToken from 0x1c5fd54be8de5259
 pub fun main(address: Address): UFix64 {
     let account = getAccount(address)
     let vaultRef = account.getCapability(FlowRacerToken.VaultPublicPath)
-        .borrow<&FlowRacerToken.Vault{FungibleToken.Balance}>()
+        .borrow<&{FungibleToken.Balance}>()
         ?? panic("Could not borrow Balance reference to the Vault")
 
     return vaultRef.balance
